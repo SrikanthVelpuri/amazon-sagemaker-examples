@@ -1,0 +1,25 @@
+flowchart TD
+    A[A/B Testing with Amazon SageMaker] --> B[Prerequisites & Configuration]
+    B --> C[Step 1: Create and Deploy Models]
+    C --> C1[Upload pre-trained models to S3]
+    C1 --> C2[Create model definitions]
+    C2 --> C3[Create variants with equal weights]
+    C3 --> C4[Deploy endpoint with both variants]
+    
+    C4 --> D[Step 2: Invoke Deployed Models]
+    D --> D1[Send test traffic to endpoint]
+    D1 --> D2[Monitor invocations per variant]
+    D2 --> D3[Invoke specific variant for testing]
+    
+    D3 --> E[Step 3: Evaluate Variant Performance]
+    E --> E1[Evaluate Variant1 metrics]
+    E1 --> E2[Evaluate Variant2 metrics]
+    E2 --> E3[Compare performance metrics]
+    
+    E3 --> F[Step 4: Dial Up Chosen Variant]
+    F --> F1[Update weights to 25%/75% split]
+    F1 --> F2[Observe traffic distribution]
+    F2 --> F3[Update weights to 0%/100% to chosen variant]
+    F3 --> F4[Confirm all traffic to better model]
+    
+    F4 --> G[Clean Up - Delete Endpoint]

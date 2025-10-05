@@ -1,0 +1,32 @@
+graph TD
+    %% Define nodes with clear names
+    Client[Client/Application]
+    S3in[S3 Input Bucket]
+    S3out[S3 Output Location]
+    SageMakerAPI[SageMaker API]
+    Queue[Request Queue]
+    Endpoint[Async Inference Endpoint]
+    SNS[Amazon SNS Topic]
+    
+    %% Setup phase
+    Client -->|1. Create Model| SageMakerAPI
+    Client -->|2. Create EndpointConfig| SageMakerAPI
+    Client -->|3. Create Endpoint| SageMakerAPI
+    Client -->|4. Configure AutoScaling| SageMakerAPI
+    
+    %% Request processing
+    Client -->|5. Upload payload| S3in
+    Client -->|6. InvokeEndpointAsync| SageMakerAPI
+    SageMakerAPI -->|7. Queue request| Queue
+    S3in -->|8. Provide input data| Queue
+    Queue -->|9. Process request| Endpoint
+    
+    %% Results and notifications
+    Endpoint -->|10. Store results| S3out
+    Endpoint -->|11. Send notification| SNS
+    SNS -->|12. Notify success/error| Client
+    S3out -->|13. Retrieve results| Client
+    
+    %% Cleanup
+    Client -->|14. Deregister scaling| SageMakerAPI
+    Client -->|15. Delete Endpoint| SageMakerAPI

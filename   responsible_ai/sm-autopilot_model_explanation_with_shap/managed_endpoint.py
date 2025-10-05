@@ -1,23 +1,12 @@
-import boto3
+"""Deprecated: Use src.autopilot_explainer.endpoint_manager instead."""
 
-region = boto3.Session().region_name
+import warnings
+from src.autopilot_explainer.endpoint_manager import ManagedEndpoint
 
-sm = boto3.Session().client(service_name="sagemaker", region_name=region)
+warnings.warn(
+    "managed_endpoint.py is deprecated. Use src.autopilot_explainer.endpoint_manager instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
-
-class ManagedEndpoint:
-    def __init__(self, ep_name, auto_delete=False):
-        self.name = ep_name
-        self.auto_delete = auto_delete
-
-    def __enter__(self):
-        endpoint_description = sm.describe_endpoint(EndpointName=self.name)
-        if endpoint_description["EndpointStatus"] == "InService":
-            self.in_service = True
-
-    def __exit__(self, type, value, traceback):
-        if self.in_service and self.auto_delete:
-            print("Deleting the endpoint: {}".format(self.name))
-            sm.delete_endpoint(EndpointName=self.name)
-            sm.get_waiter("endpoint_deleted").wait(EndpointName=self.name)
-            self.in_service = False
+__all__ = ["ManagedEndpoint"]
